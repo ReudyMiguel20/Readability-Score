@@ -4,9 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Scanner;
 
 public class ReadabilityAnalyzer {
@@ -15,6 +12,7 @@ public class ReadabilityAnalyzer {
     private Scanner scanner;
 
     public ReadabilityAnalyzer() {
+        //This regex is for counting the sentences: a sentence stops when at the end is '!', '?' or '.'
         this.sentenceRegex = "(\\w+[!?.])";
         this.scanner = new Scanner(System.in);
         this.text = "";
@@ -24,7 +22,9 @@ public class ReadabilityAnalyzer {
         this.text = userInput;
     }
 
+    //Counts and return the number of sentences found in the text
     public int sentenceCounter() {
+
         int counterSentence = 0;
         String[] splitter = this.text.split(this.sentenceRegex);
 
@@ -35,6 +35,7 @@ public class ReadabilityAnalyzer {
         return counterSentence;
     }
 
+    //Counts and return the number of characters found in the text
     public int characterCounter() {
         StringBuilder sb = new StringBuilder();
         int counterCharacter = 0;
@@ -53,6 +54,170 @@ public class ReadabilityAnalyzer {
         return counterCharacter;
     }
 
+
+    public int syllableCounter() {
+        int counterSyllables = 0;
+        boolean lastCharWasVowel = false;
+        String[] splitter = this.text.split(" ");
+
+        //Counting vowels and avoiding counting double vowels
+        for (String x : splitter) {
+            char[] wordSplitter = x.toCharArray();
+            char lastLetter = x.charAt(x.length() - 1);
+            int counterVowels = 0;
+            int counter = 0;
+
+            for (char z : wordSplitter) {
+
+                /*This is to meet the following conditions:
+                 * 1- If the last letter in the word is 'e', do not count the vowel
+                 * 2- If at the end of the word there were no vowels, then consider this as a 1-syllable one*/
+                if (counter == wordSplitter.length - 1) {
+                    if (counterVowels == 0 && z != 'e') {
+                        counterVowels++;
+                        counterSyllables += counterVowels;
+                        lastCharWasVowel = false;
+                        break;
+                    } else if (lastLetter == 'e') {
+                        if (counterVowels == 0) {
+                            lastCharWasVowel = false;
+                            counterSyllables += 1;
+                            break;
+                        } else {
+                            counterSyllables += counterVowels;
+                            lastCharWasVowel = false;
+                            break;
+                        }
+                    } else if (!lastCharWasVowel && (z == 'a' || z == 'i' || z == 'o' || z == 'u' || z == 'y')) {
+                        counterVowels++;
+                        counterSyllables += counterVowels;
+                        break;
+                    } else if (lastCharWasVowel && (z != 'a' || z != 'i' || z != 'o' || z != 'u' || z != 'y')) {
+                        counterSyllables += counterVowels;
+                        lastCharWasVowel = false;
+                        break;
+                    } else {
+                        counterSyllables += counterVowels;
+                        lastCharWasVowel = false;
+                        break;
+                    }
+//                    else if (z != 'a' ||z != 'i' || z != 'o' || z != 'u' || z != 'y') {
+//                        lastCharWasVowel = false;
+//                    }
+                }
+
+                //To avoid counting double vowels
+                if (lastCharWasVowel) {
+                    lastCharWasVowel = false;
+                    counter++;
+                    continue;
+                }
+
+                //If the word is a vowel, counter goes up
+                switch (z) {
+                    case 'a', 'e', 'i', 'o', 'u', 'y', 'A', 'E', 'I', 'O', 'U', 'Y' -> {
+                        lastCharWasVowel = true;
+                        counterVowels++;
+                        counter++;
+                    }
+                    default -> counter++;
+                }
+            }
+
+        }
+
+        return counterSyllables;
+    }
+
+    public int syllableCounter(String word) {
+        int counterSyllables = 0;
+        boolean lastCharWasVowel = false;
+        String[] splitter = word.split(" ");
+
+        //Counting vowels and avoiding counting double vowels
+        for (String x : splitter) {
+            char[] wordSplitter = x.toCharArray();
+            char lastLetter = x.charAt(x.length() - 1);
+            int counterVowels = 0;
+            int counter = 0;
+
+            for (char z : wordSplitter) {
+
+                /*This is to meet the following conditions:
+                 * 1- If the last letter in the word is 'e', do not count the vowel
+                 * 2- If at the end of the word there were no vowels, then consider this as a 1-syllable one*/
+                if (counter == wordSplitter.length - 1) {
+                    if (counterVowels == 0 && z != 'e') {
+                        counterVowels++;
+                        counterSyllables += counterVowels;
+                        lastCharWasVowel = false;
+                        break;
+                    } else if (lastLetter == 'e') {
+                        if (counterVowels == 0) {
+                            lastCharWasVowel = false;
+                            counterSyllables += 1;
+                            break;
+                        } else {
+                            counterSyllables += counterVowels;
+                            lastCharWasVowel = false;
+                            break;
+                        }
+                    } else if (!lastCharWasVowel && (z == 'a' || z == 'i' || z == 'o' || z == 'u' || z == 'y')) {
+                        counterVowels++;
+                        counterSyllables += counterVowels;
+                        break;
+                    } else if (lastCharWasVowel && (z != 'a' || z != 'i' || z != 'o' || z != 'u' || z != 'y')) {
+                        counterSyllables += counterVowels;
+                        lastCharWasVowel = false;
+                        break;
+                    } else {
+                        counterSyllables += counterVowels;
+                        lastCharWasVowel = false;
+                        break;
+                    }
+//                    else if (z != 'a' ||z != 'i' || z != 'o' || z != 'u' || z != 'y') {
+//                        lastCharWasVowel = false;
+//                    }
+                }
+
+                //To avoid counting double vowels
+                if (lastCharWasVowel) {
+                    lastCharWasVowel = false;
+                    counter++;
+                    continue;
+                }
+
+                //If the word is a vowel, counter goes up
+                switch (z) {
+                    case 'a', 'e', 'i', 'o', 'u', 'y', 'A', 'E', 'I', 'O', 'U', 'Y' -> {
+                        lastCharWasVowel = true;
+                        counterVowels++;
+                        counter++;
+                    }
+                    default -> counter++;
+                }
+            }
+
+        }
+
+        return counterSyllables;
+    }
+
+    public int polysyllableCounter() {
+        int counterPolysyllable = 0;
+
+        String[] splitterWord = this.text.split(" ");
+
+        for (String word : splitterWord) {
+            if (syllableCounter(word) >= 3) {
+                counterPolysyllable++;
+            }
+        }
+
+        return counterPolysyllable;
+    }
+
+    //Counts and return the number of words found in the text
     public int wordCounter() {
         int counterWords = 0;
         String[] splitter = this.text.split(" ");
@@ -64,8 +229,182 @@ public class ReadabilityAnalyzer {
         return counterWords;
     }
 
+    //Calculate the score based on the Automated readability index (ARI)
     public double calculateScore() {
         return 4.71 * characterCounter() / wordCounter() + 0.5 * wordCounter() / sentenceCounter() - 21.43;
+    }
+
+    public void printARIStats() {
+        double score = 4.71 * characterCounter() / wordCounter() + 0.5 * wordCounter() / sentenceCounter() - 21.43;
+        String age = recommendedAge(score);
+        String[] ageSplitter = age.split("\\-");
+        int[] ages = new int[2];
+
+        for (int i = 0; i < ages.length; i++) {
+            ages[i] = Integer.parseInt(ageSplitter[i]);
+        }
+
+        int ageFinal = 0;
+        for (int x : ages) {
+            if (ageFinal < x) {
+                ageFinal = x;
+            }
+        }
+
+        System.out.printf("\nAutomated Readability Index: %.2f (about %d-year-olds).", score, ageFinal);
+    }
+
+    public double getAgeARIStats() {
+        double score = 4.71 * characterCounter() / wordCounter() + 0.5 * wordCounter() / sentenceCounter() - 21.43;
+        String age = recommendedAge(score);
+        String[] ageSplitter = age.split("\\-");
+        int[] ages = new int[2];
+
+        for (int i = 0; i < ages.length; i++) {
+            ages[i] = Integer.parseInt(ageSplitter[i]);
+        }
+
+        int ageFinal = 0;
+        for (int x : ages) {
+            if (ageFinal < x) {
+                ageFinal = x;
+            }
+        }
+
+        return ageFinal;
+    }
+
+    public void printFKStats() {
+        double score = 0.39 * wordCounter() / sentenceCounter() + 11.8 * syllableCounter() / wordCounter() - 15.59;
+        String age = recommendedAge(score);
+        String[] ageSplitter = age.split("\\-");
+        int[] ages = new int[2];
+
+        for (int i = 0; i < ages.length; i++) {
+            ages[i] = Integer.parseInt(ageSplitter[i]);
+        }
+
+        int ageFinal = 0;
+        for (int x : ages) {
+            if (ageFinal < x) {
+                ageFinal = x;
+            }
+        }
+
+        System.out.printf("\nFlesch–Kincaid readability tests: %.2f (about %d-year-olds).", score, ageFinal);
+    }
+
+    public double getAgeFKStats() {
+        double score = 0.39 * wordCounter() / sentenceCounter() + 11.8 * syllableCounter() / wordCounter() - 15.59;
+        String age = recommendedAge(score);
+        String[] ageSplitter = age.split("\\-");
+        int[] ages = new int[2];
+
+        for (int i = 0; i < ages.length; i++) {
+            ages[i] = Integer.parseInt(ageSplitter[i]);
+        }
+
+        int ageFinal = 0;
+        for (int x : ages) {
+            if (ageFinal < x) {
+                ageFinal = x;
+            }
+        }
+
+        return ageFinal;
+    }
+
+    public void printSMOGStats() {
+        double score = 1.043 * Math.sqrt(1.0 * polysyllableCounter() * 30 / sentenceCounter()) + 3.1291;
+        String age = recommendedAge(score);
+        String[] ageSplitter = age.split("\\-");
+        int[] ages = new int[2];
+
+        for (int i = 0; i < ages.length; i++) {
+            ages[i] = Integer.parseInt(ageSplitter[i]);
+        }
+
+        int ageFinal = 0;
+        for (int x : ages) {
+            if (ageFinal < x) {
+                ageFinal = x;
+            }
+        }
+
+        System.out.printf("\nSimple Measure of Gobbledygook: %.2f (about %d-year-olds).", score, ageFinal);
+    }
+
+    public double getAgeSMOGStats() {
+        double score = 1.043 * Math.sqrt(1.0 * polysyllableCounter() * 30 / sentenceCounter()) + 3.1291;
+        String age = recommendedAge(score);
+        String[] ageSplitter = age.split("\\-");
+        int[] ages = new int[2];
+
+        for (int i = 0; i < ages.length; i++) {
+            ages[i] = Integer.parseInt(ageSplitter[i]);
+        }
+
+        int ageFinal = 0;
+        for (int x : ages) {
+            if (ageFinal < x) {
+                ageFinal = x;
+            }
+        }
+
+        return ageFinal;
+    }
+
+    public void printCLStats() {
+        double score = 0.0588 * 1.0 * characterCounter() / wordCounter() * 100 - 0.296 * sentenceCounter() / wordCounter() * 100 - 15.8;
+        String age = recommendedAge(score);
+        String[] ageSplitter = age.split("\\-");
+        int[] ages = new int[2];
+
+        for (int i = 0; i < ages.length; i++) {
+            ages[i] = Integer.parseInt(ageSplitter[i]);
+        }
+
+        int ageFinal = 0;
+        for (int x : ages) {
+            if (ageFinal < x) {
+                ageFinal = x;
+            }
+        }
+
+        System.out.printf("\nColeman–Liau index: %.2f (about %d-year-olds).", score, ageFinal);
+    }
+
+    public double getAgeCLStats() {
+        double score = 0.0588 * 1.0 * characterCounter() / wordCounter() * 100 - 0.296 * sentenceCounter() / wordCounter() * 100 - 15.8;
+        String age = recommendedAge(score);
+        String[] ageSplitter = age.split("\\-");
+        int[] ages = new int[2];
+
+        for (int i = 0; i < ages.length; i++) {
+            ages[i] = Integer.parseInt(ageSplitter[i]);
+        }
+
+        int ageFinal = 0;
+        for (int x : ages) {
+            if (ageFinal < x) {
+                ageFinal = x;
+            }
+        }
+
+        return ageFinal;
+    }
+
+    public void printAllStats() {
+        printARIStats();
+        printFKStats();
+        printSMOGStats();
+        printCLStats();
+
+        double sumAge = getAgeARIStats() + getAgeCLStats() + getAgeSMOGStats() + getAgeFKStats();
+        double averageAge = sumAge / 4.0;
+
+        System.out.println("\n");
+        System.out.printf("This text should be understood in average by %.2f-year-olds.", averageAge);
     }
 
     public String recommendedAge(double calculateScore) {
@@ -106,15 +445,29 @@ public class ReadabilityAnalyzer {
 
     public void printStats() {
         System.out.printf("""
-                The text is:
-                %s
-                
-                Words: %d
-                Sentences: %d
-                Characters: %d
-                The score is: %.2f
-                This test should be understood by %s year-olds.""", this.text, wordCounter(), sentenceCounter(), characterCounter(), calculateScore(), recommendedAge(calculateScore()));
+                        The text is:
+                        %s
+                                        
+                        Words: %d
+                        Sentences: %d
+                        Characters: %d
+                        Syllables: %d
+                        Polysyllables: %d""",
+                this.text, wordCounter(), sentenceCounter(), characterCounter(), syllableCounter(), polysyllableCounter(), recommendedAge(calculateScore()));
     }
+
+    public void printScoreMethod() {
+        System.out.println("\nEnter the score you want to calculate (ARI, FK, SMOG, CL, all)");
+
+        switch (scanner.nextLine()) {
+            case "ARI" -> printARIStats();
+            case "FK" -> printFKStats();
+            case "SMOG" -> printSMOGStats();
+            case "CL" -> printCLStats();
+            case "all" -> printAllStats();
+        }
+    }
+
 
     public void importFile(String fileName) {
         StringBuilder sb = new StringBuilder();
@@ -128,14 +481,12 @@ public class ReadabilityAnalyzer {
                 sb.append(line);
                 this.text = sb.toString();
             }
-
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
 
     }
 }
