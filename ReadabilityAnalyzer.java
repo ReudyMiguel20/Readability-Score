@@ -101,9 +101,6 @@ public class ReadabilityAnalyzer {
                         lastCharWasVowel = false;
                         break;
                     }
-//                    else if (z != 'a' ||z != 'i' || z != 'o' || z != 'u' || z != 'y') {
-//                        lastCharWasVowel = false;
-//                    }
                 }
 
                 //To avoid counting double vowels
@@ -175,9 +172,6 @@ public class ReadabilityAnalyzer {
                         lastCharWasVowel = false;
                         break;
                     }
-//                    else if (z != 'a' ||z != 'i' || z != 'o' || z != 'u' || z != 'y') {
-//                        lastCharWasVowel = false;
-//                    }
                 }
 
                 //To avoid counting double vowels
